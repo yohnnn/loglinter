@@ -73,6 +73,25 @@ golangci-lint run
 - `true` — проверка включена;
 - `false` — проверка отключена.
 
+Также поддерживаются кастомные паттерны чувствительных данных через `sensitive_patterns`.
+
+Пример:
+
+```yaml
+linters:
+  settings:
+    custom:
+      loglinter:
+        settings:
+          enable_sensitive: true
+          sensitive_patterns:
+            - jwt
+            - bearer
+            - sessionid
+```
+
+Линтер будет проверять и встроенные ключевые слова, и ваши паттерны.
+
 ## Автоисправление
 
 Для правила lowercase добавлен `SuggestedFix`:

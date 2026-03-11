@@ -18,10 +18,37 @@ var sensitiveKeywords = []string{
 	"credential",
 }
 
+var customSensitivePatterns []string
+
+func SetSensitivePatterns(patterns []string) {
+	customSensitivePatterns = customSensitivePatterns[:0]
+
+	for _, p := range patterns {
+		p = strings.TrimSpace(strings.ToLower(p))
+		if p == "" {
+			continue
+		}
+
+		customSensitivePatterns = append(customSensitivePatterns, p)
+	}
+}
+
+func effectiveSensitivePatterns() []string {
+	if len(customSensitivePatterns) == 0 {
+		return sensitiveKeywords
+	}
+
+	patterns := make([]string, 0, len(sensitiveKeywords)+len(customSensitivePatterns))
+	patterns = append(patterns, sensitiveKeywords...)
+	patterns = append(patterns, customSensitivePatterns...)
+
+	return patterns
+}
+
 func containsSensitiveKeyword(s string) bool {
 	lower := strings.ToLower(s)
 
-	for _, keyword := range sensitiveKeywords {
+	for _, keyword := range effectiveSensitivePatterns() {
 		if strings.Contains(lower, keyword) {
 			return true
 		}
@@ -33,7 +60,7 @@ func containsSensitiveKeyword(s string) bool {
 func CheckSensitive(pass *analysis.Pass, msg string, lit *ast.BasicLit, call *ast.CallExpr, msgIndex int) {
 	lower := strings.ToLower(msg)
 
-	for _, keyword := range sensitiveKeywords {
+	for _, keyword := range effectiveSensitivePatterns() {
 		if strings.Contains(lower, keyword) {
 			pass.Reportf(
 				lit.Pos(),

@@ -12,12 +12,14 @@ import (
 )
 
 type Config struct {
-	EnableSensitive bool
+	EnableSensitive   bool
+	SensitivePatterns []string
 }
 
 func DefaultConfig() Config {
 	return Config{
-		EnableSensitive: true,
+		EnableSensitive:   true,
+		SensitivePatterns: nil,
 	}
 }
 
@@ -140,6 +142,8 @@ func checkLog(pass *analysis.Pass, call *ast.CallExpr, msgIndex int, cfg Config)
 	activeRules := rules.All
 	if !cfg.EnableSensitive {
 		activeRules = rules.AllWithoutSensitive
+	} else {
+		rules.SetSensitivePatterns(cfg.SensitivePatterns)
 	}
 
 	for _, rule := range activeRules {

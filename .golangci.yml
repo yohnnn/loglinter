@@ -13,3 +13,6 @@ linters:
         original-url: https://github.com/yohnnn/loglinter
         settings:
           enable_sensitive: true
+          sensitive_patterns:
+            - jwt
+            - bearer
