@@ -14,7 +14,7 @@
 - `log/slog`: `Info`, `Error`, `Warn`, `Debug`, `InfoContext`, `ErrorContext`, `WarnContext`, `DebugContext`
 - `go.uber.org/zap`: `Info`, `Error`, `Warn`, `Debug`, `Fatal`, `Panic`
 
-## Использование как standalone-анализатора
+## Использование как отдельного анализатора
 
 Сборка:
 
@@ -97,6 +97,66 @@ linters:
 Для правила lowercase добавлен `SuggestedFix`:
 
 - если сообщение начинается с заглавной буквы, линтер предлагает как должна выглядеть строчка.
+
+## Примеры использования
+
+### 1) Проверить только один пакет через отдельный анализатор
+
+```bash
+go build -o loglint ./cmd/loglint
+./loglint ./cmd/loglint
+```
+
+### 2) Проверить весь модуль через отдельный анализатор
+
+```bash
+./loglint ./...
+```
+
+### 3) Запуск через golangci-lint с отключенной sensitive-проверкой
+
+```yaml
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - loglinter
+  settings:
+    custom:
+      loglinter:
+        type: goplugin
+        path: ./loglinter.so
+        settings:
+          enable_sensitive: false
+```
+
+### 4) Запуск через golangci-lint со своими sensitive-паттернами
+
+```yaml
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - loglinter
+  settings:
+    custom:
+      loglinter:
+        type: goplugin
+        path: ./loglinter.so
+        settings:
+          enable_sensitive: true
+          sensitive_patterns:
+            - jwt
+            - bearer
+            - sessionid
+```
+
+```bash
+go build -buildmode=plugin -o loglinter.so ./plugin
+golangci-lint run
+```
 
 
 ## Тесты
