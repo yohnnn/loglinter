@@ -1,0 +1,15 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - loglinter
+  settings:
+    custom:
+      loglinter:
+        type: goplugin
+        path: ./loglinter.so
+        description: Checks that log messages follow best practices
+        original-url: https://github.com/yohnnn/loglinter
+        settings:
+          enable_sensitive: true
