@@ -9,6 +9,6 @@ import (
 )
 
 func main() {
-	slog.Info("starting loglinter...") // This log is just for demonstration and will not be analyzed by the linter.
+	slog.Info("starting loglinter...") // Test log message.
 	singlechecker.Main(analyzer.New())
 }
